@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 问题1修复：补全viewport配置，禁止缩放（不影响背景，但适配更稳） -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>猜数字游戏</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px 15px;
+            font-size: 18px;
+            min-height: 100vh; /* 关键：占满屏幕高度，背景才会完整显示 */
+            /* 问题2修复：换稳定不被拦截的背景图链接（原链接失效/被拦截） */
+            background-image: url("https://ts1.tc.mm.bing.net/th/id/OIP-C.FmtG5bG7hgOAINH_vchJYwHaQC?rs=1&pid=ImgDetMain&o=7&rm=3");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+         .container {
+            background-color: rgba(255, 255, 255, 0.85); /* 白色半透明背景 */
+            padding: 30px;
+            border-radius: 16px; /* 圆角边框 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 轻微阴影，更有质感 */
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        #restart {
+            background-color: #6c757d;
+        }
+        #inputnumber {
+            padding: 12px;
+            font-size: 18px;
+            width: 120px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0 10px;
+        }
+        br {
+            line-height: 2;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        #count {
+            color: #007bff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<!-- 问题3修复：删除body标签上的内联width:250px（不影响背景，但避免页面过窄） -->
+<body class="container">
+    <button id="restart">重新开始一局游戏</button><br>
+    输入要猜的数字:
+    <input type="number" id="inputnumber" min="1" max="100"> <!-- 优化：数字键盘更方便 -->
+    <button id="guess">猜</button><br>
+    已经猜过的次数：<span id="count">0</span><br>
+    结果：<span id="result"></span>
+
+    <script src="jquery.min.js"></script>
+    <script>
+        var number = Math.floor(Math.random() * 100 + 1);
+        console.log(number);
+        
+        let count = 0;
+        $("#guess").click(function(){
+            count++;
+            $("#count").text(count);
+            let inputnumber = Number($("#inputnumber").val()); // 修复：转数字避免比较错误
+            
+            // 新增：输入校验，避免非数字输入
+            if(isNaN(inputnumber) || inputnumber < 1 || inputnumber > 100){
+                $("#result").text("请输入1-100有效数字！");
+                $("#result").css("color","orange");
+                $("#inputnumber").val("");
+                return;
+            }
+
+            if(number < inputnumber){
+                $("#result").text("猜大了");
+                $("#result").css("color","red");
+                $("#inputnumber").val("");
+            }else if(number > inputnumber){
+                $("#result").text("猜小了");
+                $("#result").css("color","red");
+                $("#inputnumber").val("");
+            }else{
+                $("#result").text("猜对了！🎉");
+                $("#result").css("color","green");
+            }
+        });
+        $("#restart").click(function(){
+            number = Math.floor(Math.random() * 100 + 1);
+            console.log(number);
+            count = 0;
+            $("#count").text(count);
+            $("#result").text("");
+            $("#inputnumber").val("");
+        });
+    </script>
+</body>
+</html>
